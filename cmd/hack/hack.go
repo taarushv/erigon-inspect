@@ -2293,6 +2293,7 @@ func devTx(chaindata string) error {
 		if len(k) == 20 {
 			return nil
 		}
+		fmt.Printf("%x\n", v)
 		if len(v) == 0 {
 			panic("found")
 		}
