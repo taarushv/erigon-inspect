@@ -2289,7 +2289,7 @@ func devTx(chaindata string) error {
 		return err
 	}
 	defer tx.Rollback()
-	tx.ForEach(kv.PlainState, nil, func(k, v []byte) error {
+	tx.ForEach(kv.PlainState, []byte{}, func(k, v []byte) error {
 		if len(k) == 20 {
 			return nil
 		}
