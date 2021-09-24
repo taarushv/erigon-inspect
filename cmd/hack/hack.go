@@ -2289,6 +2289,15 @@ func devTx(chaindata string) error {
 		return err
 	}
 	defer tx.Rollback()
+	tx.ForEach(kv.PlainState, nil, func(k, v []byte) error {
+		if len(k) == 20 {
+			return nil
+		}
+		if len(v) == 0 {
+			panic("found")
+		}
+		return nil
+	})
 	b, err := rawdb.ReadBlockByNumber(tx, 0)
 	tool.Check(err)
 	cc, err := rawdb.ReadChainConfig(tx, b.Hash())
