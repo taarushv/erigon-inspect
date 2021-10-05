@@ -30,11 +30,13 @@ func (api *APIImpl) Call(ctx context.Context, args ethapi.CallArgs, blockNrOrHas
 	if err != nil {
 		return nil, err
 	}
-	defer tx.Rollback()
 	took := time.Since(t)
 	if took > 200*time.Millisecond {
 		log.Info("start tx", "took", time.Since(t))
 	}
+
+	defer tx.Rollback()
+	return nil, err
 
 	chainConfig, err := api.chainConfig(tx)
 	if err != nil {
