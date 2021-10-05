@@ -244,6 +244,7 @@ func RemoteServices(ctx context.Context, cfg Flags, logger log.Logger, rootCance
 		log.Info("if you run RPCDaemon on same machine with Erigon add --datadir option")
 	}
 
+	stateCache = kvcache.New(cfg.StateCache)
 	if cfg.PrivateApiAddr == "" {
 		return db, eth, txPool, mining, stateCache, nil
 	}
