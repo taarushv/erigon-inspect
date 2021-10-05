@@ -108,7 +108,7 @@ tracker:
 db-tools: libmdbx
 	@echo "Building db-tools"
 	git submodule update --init --recursive
-	cd libmdbx && MDBX_DEBUG=0 MDBX_FORCE_ASSERTIONS=1 MDBX_BUILD_TIMESTAMP=unknown make tools
+	cd libmdbx && MDBX_DEBUG=0 MDBX_FORCE_ASSERTIONS=0 MDBX_BUILD_TIMESTAMP=unknown make tools
 	cp libmdbx/mdbx_chk $(GOBIN)
 	cp libmdbx/mdbx_copy $(GOBIN)
 	cp libmdbx/mdbx_dump $(GOBIN)
