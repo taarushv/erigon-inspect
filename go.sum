@@ -499,8 +499,8 @@ github.com/kylelemons/godebug v0.0.0-20170224010052-a616ab194758 h1:0D5M2HQSGD3P
 github.com/kylelemons/godebug v0.0.0-20170224010052-a616ab194758/go.mod h1:B69LEHPfb2qLo0BaaOLcbitczOKLWTsrBG9LczfCD4k=
 github.com/leanovate/gopter v0.2.9 h1:fQjYxZaynp97ozCzfOyOuAGOU4aU/z37zf/tOujFk7c=
 github.com/leanovate/gopter v0.2.9/go.mod h1:U2L/78B+KVFIx2VmW6onHJQzXtFb+p5y3y2Sh+Jxxv8=
-github.com/ledgerwatch/erigon-lib v0.0.0-20211005110717-625ab87ad00f h1:M5r2Go0TpDyZg3gNOL/WIKJjqYFeia6rz5WsAxzxdto=
-github.com/ledgerwatch/erigon-lib v0.0.0-20211005110717-625ab87ad00f/go.mod h1:SXvRBEIlYIms4ZgWYnSR5zzp4TJRh2pEORUjGjbMDEc=
+github.com/ledgerwatch/erigon-lib v0.0.0-20211005110945-3b44b55169ab h1:fsK4bQTvSgwRCfk8M/T1BaEZ0pMND7Tcg9yT12j6Zzo=
+github.com/ledgerwatch/erigon-lib v0.0.0-20211005110945-3b44b55169ab/go.mod h1:2qcY/k1UiC7wAOkqhh46fZE6cILPTz3zwq0+B3S1j8Y=
 github.com/ledgerwatch/log/v3 v3.3.1 h1:HmvLeTEvtCtqSvtu4t/a5MAdcLfeBcbIeowXbLYuzLc=
 github.com/ledgerwatch/log/v3 v3.3.1/go.mod h1:S3VJqhhVX32rbp1JyyvhJou12twtFwNEPESBgpbNkRk=
 github.com/ledgerwatch/secp256k1 v0.0.0-20210626115225-cd5cd00ed72d h1:/IKMrJdfRsoYNc36PXqP4xMH3vhW/8IQyBKGQbKZUno=
@@ -754,8 +754,8 @@ github.com/tklauser/go-sysconf v0.3.7 h1:HT7h4+536gjqeq1ZIJPgOl1rg1XFatQGVZWp7Py
 github.com/tklauser/go-sysconf v0.3.7/go.mod h1:JZIdXh4RmBvZDBZ41ld2bGxRV3n4daiiqA3skYhAoQ4=
 github.com/tklauser/numcpus v0.2.3 h1:nQ0QYpiritP6ViFhrKYsiv6VVxOpum2Gks5GhnJbS/8=
 github.com/tklauser/numcpus v0.2.3/go.mod h1:vpEPS/JC+oZGGQ/My/vJnNsvMDQL6PwOqt8dsCw5j+E=
-github.com/torquem-ch/mdbx-go v0.19.3-0.20211005110608-6b1b7f644fd9 h1:2+arAECYvBZd2uz0Yf4JVeq9R7HPHaiiEp4vkaS5iQo=
-github.com/torquem-ch/mdbx-go v0.19.3-0.20211005110608-6b1b7f644fd9/go.mod h1:T2fsoJDVppxfAPTLd1svUgH1kpPmeXdPESmroSHcL1E=
+github.com/torquem-ch/mdbx-go v0.19.3-0.20211005110907-1ec3d28cf3d1 h1:v1BZ6saNU4ISA6HVxrgcpVfoSzMAWLKJSDq+PYPvHPY=
+github.com/torquem-ch/mdbx-go v0.19.3-0.20211005110907-1ec3d28cf3d1/go.mod h1:T2fsoJDVppxfAPTLd1svUgH1kpPmeXdPESmroSHcL1E=
 github.com/ttacon/chalk v0.0.0-20160626202418-22c06c80ed31/go.mod h1:onvgF043R+lC5RZ8IT9rBXDaEDnpnw/Cl+HFiw+v/7Q=
 github.com/tv42/httpunix v0.0.0-20191220191345-2ba4b9c3382c/go.mod h1:hzIxponao9Kjc7aWznkXaL4U4TWaDSs8zcsY4Ka08nM=
 github.com/ugorji/go v1.1.7/go.mod h1:kZn38zHttfInRq0xu/PH0az30d+z6vm202qpg1oXVMw=
