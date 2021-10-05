@@ -31,7 +31,10 @@ func (api *APIImpl) Call(ctx context.Context, args ethapi.CallArgs, blockNrOrHas
 		return nil, err
 	}
 	defer tx.Rollback()
-	log.Info("start tx", "took", time.Since(t))
+	took := time.Since(t)
+	if took > time.Second {
+		log.Info("start tx", "took", time.Since(t))
+	}
 
 	chainConfig, err := api.chainConfig(tx)
 	if err != nil {
