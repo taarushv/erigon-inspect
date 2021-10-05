@@ -32,7 +32,7 @@ func (api *APIImpl) Call(ctx context.Context, args ethapi.CallArgs, blockNrOrHas
 	}
 	defer tx.Rollback()
 	took := time.Since(t)
-	if took > 100*time.Millisecond {
+	if took > 200*time.Millisecond {
 		log.Info("start tx", "took", time.Since(t))
 	}
 
