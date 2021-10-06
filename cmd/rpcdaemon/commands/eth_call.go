@@ -39,7 +39,8 @@ func (api *APIImpl) Call(ctx context.Context, args ethapi.CallArgs, blockNrOrHas
 		args.Gas = (*hexutil.Uint64)(&api.GasCap)
 	}
 
-	contractHasTEVM := ethdb.GetHasTEVM(tx)
+	//contractHasTEVM := ethdb.GetHasTEVM(tx)
+	contractHasTEVM := false
 
 	result, err := transactions.DoCall(ctx, args, tx, blockNrOrHash, overrides, api.GasCap, chainConfig, api.filters, api.stateCache, contractHasTEVM)
 	if err != nil {
