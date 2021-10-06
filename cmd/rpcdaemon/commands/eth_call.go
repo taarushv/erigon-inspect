@@ -38,8 +38,6 @@ func (api *APIImpl) Call(ctx context.Context, args ethapi.CallArgs, blockNrOrHas
 	}
 	defer rollback()
 
-	return nil, err
-
 	chainConfig, err := api.chainConfig(tx)
 	if err != nil {
 		return nil, err
