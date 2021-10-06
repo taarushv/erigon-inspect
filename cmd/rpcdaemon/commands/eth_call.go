@@ -26,16 +26,18 @@ import (
 // Call implements eth_call. Executes a new message call immediately without creating a transaction on the block chain.
 func (api *APIImpl) Call(ctx context.Context, args ethapi.CallArgs, blockNrOrHash rpc.BlockNumberOrHash, overrides *map[common.Address]ethapi.Account) (hexutil.Bytes, error) {
 	t := time.Now()
-	tx, err := api.db.BeginRo(ctx)
+
+	tx, _, rollback, err := kv.BeeginRoIfNil(nil, api.db, ctx)
+	//tx, err := api.db.BeginRo(ctx)
 	if err != nil {
 		return nil, err
 	}
 	took := time.Since(t)
-	if took > 200*time.Millisecond {
+	if took > 10*time.Millisecond {
 		log.Info("start tx", "took", time.Since(t))
 	}
+	defer rollback()
 
-	defer tx.Rollback()
 	return nil, err
 
 	chainConfig, err := api.chainConfig(tx)
