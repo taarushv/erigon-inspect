@@ -40,7 +40,7 @@ func (api *APIImpl) Call(ctx context.Context, args ethapi.CallArgs, blockNrOrHas
 	}
 
 	//contractHasTEVM := ethdb.GetHasTEVM(tx)
-	contractHasTEVM := false
+	contractHasTEVM := func(contractHash common.Hash) (bool, error) { return false, nil }
 
 	result, err := transactions.DoCall(ctx, args, tx, blockNrOrHash, overrides, api.GasCap, chainConfig, api.filters, api.stateCache, contractHasTEVM)
 	if err != nil {
