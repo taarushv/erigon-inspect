@@ -6,7 +6,6 @@ import (
 	"encoding/binary"
 	"fmt"
 	"os"
-	"syscall"
 
 	"github.com/ledgerwatch/erigon-lib/common/length"
 	"github.com/ledgerwatch/erigon-lib/etl"
@@ -124,8 +123,6 @@ func unwindHashStateStageImpl(logPrefix string, u *UnwindState, s *StageState, t
 }
 
 func PromoteHashedStateCleanly(logPrefix string, db kv.RwTx, cfg HashStateCfg, quit <-chan struct{}) error {
-	syscall.Kill(syscall.Getpid(), syscall.SIGINT)
-
 	err := etl.Transform(
 		logPrefix,
 		db,
