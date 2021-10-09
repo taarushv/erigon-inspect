@@ -81,10 +81,9 @@ Content-Type: application/json
 
 {
   "jsonrpc": "2.0",
-  "method": "eth_getBlockByNumber",
+  "method": "eth_sendRawTransaction",
   "params": [
-    "0xf4240",
-    true
+    "0xf860011e830186a094000000000000000000000000000000000000000064012ea03bfdff07b0d78c295e0079ac61f857f11de18babecc0ee078fcf8fba2096d97ba027800edd053a62ebcdb5c5569ebe17123cdd316a019eebd2f46c393e4e1fb55f"
   ],
   "id": 2
 }

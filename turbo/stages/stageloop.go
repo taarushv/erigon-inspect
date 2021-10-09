@@ -128,9 +128,11 @@ func StageLoopStep(
 
 	err = sync.Run(db, tx, initialCycle)
 	if err != nil {
+		fmt.Printf("stop %s\n", err)
 		return err
 	}
 	if canRunCycleInOneTransaction {
+		fmt.Printf("commit\n")
 		commitStart := time.Now()
 		errTx := tx.Commit()
 		if errTx != nil {

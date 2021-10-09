@@ -3157,7 +3157,7 @@ func devTx(chaindata string) error {
 	tool.Check(err)
 	cc, err := rawdb.ReadChainConfig(tx, b.Hash())
 	tool.Check(err)
-	txn := types.NewTransaction(2, common.Address{}, uint256.NewInt(100), 100_000, uint256.NewInt(1), []byte{1})
+	txn := types.NewTransaction(1, common.Address{}, uint256.NewInt(100), 100_000, uint256.NewInt(30), []byte{1})
 	signedTx, err := types.SignTx(txn, *types.LatestSigner(cc), core.DevnetSignPrivateKey)
 	tool.Check(err)
 	buf := bytes.NewBuffer(nil)

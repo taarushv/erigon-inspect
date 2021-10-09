@@ -721,6 +721,7 @@ func (ss *SentryServerImpl) SendMessageById(_ context.Context, inreq *proto_sent
 }
 
 func (ss *SentryServerImpl) SendMessageToRandomPeers(ctx context.Context, req *proto_sentry.SendMessageToRandomPeersRequest) (*proto_sentry.SentPeers, error) {
+	fmt.Printf("SendMessageToRandomPeers: %s\n", req.Data.Id.String())
 	msgcode := eth.FromProto[ss.Protocol.Version][req.Data.Id]
 	if msgcode != eth.NewBlockMsg &&
 		msgcode != eth.NewBlockHashesMsg &&
@@ -748,7 +749,9 @@ func (ss *SentryServerImpl) SendMessageToRandomPeers(ctx context.Context, req *p
 		if peerInfo == nil {
 			return true
 		}
+		fmt.Printf("Sending: %d,%d\n", msgcode, len(req.Data.Data))
 		if err := peerInfo.rw.WriteMsg(p2p.Msg{Code: msgcode, Size: uint32(len(req.Data.Data)), Payload: bytes.NewReader(req.Data.Data)}); err != nil {
+			fmt.Printf("Sending error: %x\n", err)
 			peerInfo.Remove()
 			ss.GoodPeers.Delete(peerID)
 			innerErr = err
@@ -765,6 +768,7 @@ func (ss *SentryServerImpl) SendMessageToRandomPeers(ctx context.Context, req *p
 }
 
 func (ss *SentryServerImpl) SendMessageToAll(ctx context.Context, req *proto_sentry.OutboundMessageData) (*proto_sentry.SentPeers, error) {
+	fmt.Printf("SendMessageToAll: %s\n", req.Id.String())
 	msgcode := eth.FromProto[ss.Protocol.Version][req.Id]
 	if msgcode != eth.NewBlockMsg &&
 		msgcode != eth.NewPooledTransactionHashesMsg && // to broadcast new local transactions
@@ -780,9 +784,11 @@ func (ss *SentryServerImpl) SendMessageToAll(ctx context.Context, req *proto_sen
 		if peerInfo == nil {
 			return true
 		}
+		fmt.Printf("SendMessageToAll: %d,%s,%d\n", msgcode, req.Id.String(), len(req.Data))
 		if err := peerInfo.rw.WriteMsg(p2p.Msg{Code: msgcode, Size: uint32(len(req.Data)), Payload: bytes.NewReader(req.Data)}); err != nil {
 			peerInfo.Remove()
 			ss.GoodPeers.Delete(peerID)
+
 			innerErr = err
 			return true
 		}
