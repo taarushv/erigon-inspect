@@ -510,7 +510,7 @@ func (hd *HeaderDownload) ReadProgressFromDb(tx kv.RwTx) (err error) {
 }
 
 func (hd *HeaderDownload) invalidateAnchor(anchor *Anchor) {
-	log.Warn("Invalidating anchor for suspected unavailability", "height", anchor.blockHeight)
+	log.Warn("Invalidating anchor for suspected unavailability", "height", anchor.blockHeight, "hash", anchor.parentHash)
 	delete(hd.anchors, anchor.parentHash)
 	hd.removeUpwards(anchor.links)
 }
@@ -560,6 +560,9 @@ func (hd *HeaderDownload) RequestSkeleton() *HeaderRequest {
 	hd.lock.RLock()
 	defer hd.lock.RUnlock()
 	log.Trace("Request skeleton", "anchors", len(hd.anchors), "top seen height", hd.topSeenHeight, "highestInDb", hd.highestInDb)
+	if hd.diagnostics {
+		//log.Info("Diagnostics: sent skeleton request", "anchors", len(hd.anchors), "top seen height", hd.topSeenHeight, "highestInDb", hd.highestInDb)
+	}
 	if len(hd.anchors) > 16 {
 		return nil // Need to be below anchor threshold to produce skeleton request
 	}
@@ -580,6 +583,11 @@ func (hd *HeaderDownload) InsertHeaders(hf func(header *types.Header, blockHeigh
 	hd.lock.Lock()
 	defer hd.lock.Unlock()
 	var linksInFuture []*Link // Here we accumulate links that fail validation as "in the future"
+	if hd.diagnostics {
+		if len(hd.insertList) == 0 {
+			log.Info("insertList is empty")
+		}
+	}
 	for len(hd.insertList) > 0 {
 		// Make sure long insertions do not appear as a stuck stage 1
 		select {
@@ -590,6 +598,9 @@ func (hd *HeaderDownload) InsertHeaders(hf func(header *types.Header, blockHeigh
 		link := hd.insertList[len(hd.insertList)-1]
 		if link.blockHeight <= hd.preverifiedHeight && !link.preverified {
 			// Header should be preverified, but not yet, try again later
+			if hd.diagnostics {
+				log.Info("Header not yet preverified", "height", link.blockHeight, "insertList", len(hd.insertList))
+			}
 			break
 		}
 		hd.insertList = hd.insertList[:len(hd.insertList)-1]
@@ -617,6 +628,9 @@ func (hd *HeaderDownload) InsertHeaders(hf func(header *types.Header, blockHeigh
 			heap.Remove(hd.linkQueue, link.idx)
 		}
 		if skip {
+			if hd.diagnostics {
+				log.Info("Header skipped", "height", link.blockHeight, "insertList", len(hd.insertList))
+			}
 			delete(hd.links, link.hash)
 			continue
 		}
@@ -842,11 +856,17 @@ func (hi *HeaderInserter) BestHeaderChanged() bool {
 // It remember peerID - then later - if anchors created from segments will abandoned - this peerID gonna get Penalty
 func (hd *HeaderDownload) ProcessSegment(segment *ChainSegment, newBlock bool, peerID string) (requestMore bool, penalties []PenaltyItem) {
 	log.Trace("processSegment", "from", segment.Headers[0].Number.Uint64(), "to", segment.Headers[len(segment.Headers)-1].Number.Uint64())
+	if hd.diagnostics {
+		log.Info("Diagnostics: processSegment", "from", segment.Headers[0].Number.Uint64(), "to", segment.Headers[len(segment.Headers)-1].Number.Uint64(), "peer", peerID)
+	}
 	hd.lock.Lock()
 	defer hd.lock.Unlock()
 	foundAnchor, start := hd.findAnchors(segment)
 	foundTip, end := hd.findLink(segment, start) // We ignore penalty because we will check it as part of PoW check
 	if end == 0 {
+		if hd.diagnostics {
+			log.Info("Duplicate segment")
+		}
 		log.Trace("Duplicate segment")
 		return
 	}
@@ -869,12 +889,18 @@ func (hd *HeaderDownload) ProcessSegment(segment *ChainSegment, newBlock bool, p
 				return
 			}
 			log.Trace("Connected", "start", startNum, "end", endNum)
+			if hd.diagnostics {
+				log.Info("Connected", "start", startNum, "end", endNum)
+			}
 		} else {
 			// ExtendDown
 			var err error
 			if requestMore, err = hd.extendDown(segment, start, end); err != nil {
 				log.Debug("ExtendDown failed", "error", err)
 				return
+			}
+			if hd.diagnostics {
+				log.Info("Extended Down", "start", startNum, "end", endNum)
 			}
 			log.Trace("Extended Down", "start", startNum, "end", endNum)
 		}
@@ -885,6 +911,9 @@ func (hd *HeaderDownload) ProcessSegment(segment *ChainSegment, newBlock bool, p
 				log.Debug("ExtendUp failed", "error", err)
 				return
 			}
+			if hd.diagnostics {
+				log.Info("Extended Up", "start", startNum, "end", endNum)
+			}
 			log.Trace("Extended Up", "start", startNum, "end", endNum)
 		}
 	} else {
@@ -893,6 +922,9 @@ func (hd *HeaderDownload) ProcessSegment(segment *ChainSegment, newBlock bool, p
 		if requestMore, err = hd.newAnchor(segment, start, end, peerID); err != nil {
 			log.Debug("NewAnchor failed", "error", err)
 			return
+		}
+		if hd.diagnostics {
+			log.Info("NewAnchor", "start", startNum, "end", endNum)
 		}
 		log.Trace("NewAnchor", "start", startNum, "end", endNum)
 	}
@@ -1029,4 +1061,16 @@ func DecodeTips(encodings []string) (map[common.Hash]HeaderRecord, error) {
 	}
 
 	return hardTips, nil
+}
+
+func (hd *HeaderDownload) SetDiagnostics(diagnostics bool) {
+	hd.lock.Lock()
+	defer hd.lock.Unlock()
+	hd.diagnostics = diagnostics
+}
+
+func (hd *HeaderDownload) Diagnostics() bool {
+	hd.lock.RLock()
+	defer hd.lock.RUnlock()
+	return hd.diagnostics
 }

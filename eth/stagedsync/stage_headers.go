@@ -128,6 +128,9 @@ Loop:
 			peer = cfg.headerReqSend(ctx, req)
 			if peer != nil {
 				cfg.hd.SentRequest(req, currentTime, 5 /* timeout */)
+				if cfg.hd.Diagnostics() {
+					log.Info("Sent request", "height", req.Number, "length", req.Length)
+				}
 				log.Trace("Sent request", "height", req.Number)
 			}
 		}
@@ -138,6 +141,9 @@ Loop:
 			if req != nil {
 				peer = cfg.headerReqSend(ctx, req)
 				if peer != nil {
+					if cfg.hd.Diagnostics() {
+						log.Info("Sent request", "height", req.Number, "length", req.Length)
+					}
 					cfg.hd.SentRequest(req, currentTime, 5 /*timeout */)
 					log.Trace("Sent request", "height", req.Number)
 				}
@@ -151,6 +157,9 @@ Loop:
 		if req != nil {
 			peer = cfg.headerReqSend(ctx, req)
 			if peer != nil {
+				if cfg.hd.Diagnostics() {
+					log.Info("Sent skeleton request", "height", req.Number, "length", req.Length)
+				}
 				log.Trace("Sent skeleton request", "height", req.Number)
 			}
 		}
@@ -164,7 +173,7 @@ Loop:
 			cfg.announceNewHashes(ctx, announces)
 		}
 		if s.BlockNumber > 0 && noProgressCount >= 5 {
-			break
+			//break
 		}
 		if headerInserter.BestHeaderChanged() { // We do not break unless there best header changed
 			if !initialCycle {
@@ -186,9 +195,12 @@ Loop:
 		case <-logEvery.C:
 			progress := cfg.hd.Progress()
 			if prevProgress == progress {
+				// Start diagnostics
+				cfg.hd.SetDiagnostics(true)
 				noProgressCount++
 			} else {
 				noProgressCount = 0 // Reset, there was progress
+				cfg.hd.SetDiagnostics(false)
 			}
 			logProgressHeaders(logPrefix, prevProgress, progress)
 			prevProgress = progress
@@ -218,6 +230,7 @@ Loop:
 	}
 	// We do not print the following line if the stage was interrupted
 	log.Info(fmt.Sprintf("[%s] Processed", logPrefix), "highest inserted", headerInserter.GetHighest(), "age", common.PrettyAge(time.Unix(int64(headerInserter.GetHighestTimestamp()), 0)))
+	cfg.hd.SetDiagnostics(false)
 	return nil
 }
 
