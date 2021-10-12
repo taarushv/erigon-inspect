@@ -107,6 +107,35 @@ func (api *TraceAPIImpl) Get(ctx context.Context, txHash common.Hash, indicies [
 	return nil, err
 }
 
+// Gets traces for a range of blocks, implements trace_blockRange
+func (api *TraceAPIImpl) BlockRange(ctx context.Context, startBlock rpc.BlockNumber, endBlock rpc.BlockNumber) ([]ParityTraces, error) {
+	if startBlock > endBlock {
+		return nil, fmt.Errorf("Invalid block range")
+	}
+	var rangeTraces []ParityTraces
+	for i := startBlock; i <= endBlock; i++ {
+		blockTraces, err := api.Block(ctx, i)
+		if err != nil {
+			return nil, err
+		}
+		rangeTraces = append(rangeTraces, blockTraces)
+	}
+	return rangeTraces, nil
+}
+
+// Gets traces for a specific list of blocks, implements trace_specificBlocks
+func (api *TraceAPIImpl) SpecificBlocks(ctx context.Context, blocks []rpc.BlockNumber) ([]ParityTraces, error) {
+	var specificTraces []ParityTraces
+	for _, block := range blocks {
+		blockTraces, err := api.Block(ctx, block)
+		if err != nil {
+			return nil, err
+		}
+		specificTraces = append(specificTraces, blockTraces)
+	}
+	return specificTraces, nil
+}
+
 // Block implements trace_block
 func (api *TraceAPIImpl) Block(ctx context.Context, blockNr rpc.BlockNumber) (ParityTraces, error) {
 	tx, err := api.kv.BeginRo(ctx)
